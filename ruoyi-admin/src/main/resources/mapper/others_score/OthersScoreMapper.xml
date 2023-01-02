@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.others_score.mapper.OthersScoreMapper">
+    
+    <resultMap type="OthersScore" id="OthersScoreResult">
+        <result property="id"    column="id"    />
+        <result property="pId"    column="p_id"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="score"    column="score"    />
+    </resultMap>
+
+    <sql id="selectOthersScoreVo">
+        select id, p_id, type_name, score from others_score
+    </sql>
+
+    <select id="selectOthersScoreList" parameterType="OthersScore" resultMap="OthersScoreResult">
+        <include refid="selectOthersScoreVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="pId != null "> and p_id = #{pId}</if>
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="params.beginScore != null and params.beginScore != '' and params.endScore != null and params.endScore != ''"> and score between #{params.beginScore} and #{params.endScore}</if>
+        </where>
+    </select>
+    
+    <select id="selectOthersScoreById" parameterType="Long" resultMap="OthersScoreResult">
+        <include refid="selectOthersScoreVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertOthersScore" parameterType="OthersScore" useGeneratedKeys="true" keyProperty="id">
+        insert into others_score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pId != null">p_id,</if>
+            <if test="typeName != null">type_name,</if>
+            <if test="score != null">score,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pId != null">#{pId},</if>
+            <if test="typeName != null">#{typeName},</if>
+            <if test="score != null">#{score},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOthersScore" parameterType="OthersScore">
+        update others_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pId != null">p_id = #{pId},</if>
+            <if test="typeName != null">type_name = #{typeName},</if>
+            <if test="score != null">score = #{score},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOthersScoreById" parameterType="Long">
+        delete from others_score where id = #{id}
+    </delete>
+
+    <delete id="deleteOthersScoreByIds" parameterType="String">
+        delete from others_score where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

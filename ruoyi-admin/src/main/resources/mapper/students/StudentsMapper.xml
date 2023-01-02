@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.students.mapper.StudentsMapper">
+    
+    <resultMap type="Students" id="StudentsResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="dormitoryId"    column="dormitory_id"    />
+        <result property="enterDate"    column="enter_date"    />
+        <result property="graduated"    column="graduated"    />
+        <result property="graduatePlan"    column="graduate_plan"    />
+    </resultMap>
+
+    <sql id="selectStudentsVo">
+        select id, user_id, dormitory_id, enter_date, graduated, graduate_plan from students
+    </sql>
+
+    <select id="selectStudentsList" parameterType="Students" resultMap="StudentsResult">
+        <include refid="selectStudentsVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="dormitoryId != null "> and dormitory_id = #{dormitoryId}</if>
+            <if test="enterDate != null "> and enter_date = #{enterDate}</if>
+            <if test="graduated != null "> and graduated = #{graduated}</if>
+            <if test="graduatePlan != null "> and graduate_plan = #{graduatePlan}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentsById" parameterType="Long" resultMap="StudentsResult">
+        <include refid="selectStudentsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStudents" parameterType="Students" useGeneratedKeys="true" keyProperty="id">
+        insert into students
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="dormitoryId != null">dormitory_id,</if>
+            <if test="enterDate != null">enter_date,</if>
+            <if test="graduated != null">graduated,</if>
+            <if test="graduatePlan != null">graduate_plan,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="dormitoryId != null">#{dormitoryId},</if>
+            <if test="enterDate != null">#{enterDate},</if>
+            <if test="graduated != null">#{graduated},</if>
+            <if test="graduatePlan != null">#{graduatePlan},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudents" parameterType="Students">
+        update students
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="dormitoryId != null">dormitory_id = #{dormitoryId},</if>
+            <if test="enterDate != null">enter_date = #{enterDate},</if>
+            <if test="graduated != null">graduated = #{graduated},</if>
+            <if test="graduatePlan != null">graduate_plan = #{graduatePlan},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStudentsById" parameterType="Long">
+        delete from students where id = #{id}
+    </delete>
+
+    <delete id="deleteStudentsByIds" parameterType="String">
+        delete from students where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

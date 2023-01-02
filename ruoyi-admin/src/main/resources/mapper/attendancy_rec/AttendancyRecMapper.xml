@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.attendancy_rec.mapper.AttendancyRecMapper">
+    
+    <resultMap type="AttendancyRec" id="AttendancyRecResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="typeId"    column="type_id"    />
+        <result property="addedBy"    column="added_by"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="recDate"    column="rec_date"    />
+        <result property="canceled"    column="canceled"    />
+    </resultMap>
+
+    <sql id="selectAttendancyRecVo">
+        select id, student_id, type_id, added_by, course_name, rec_date, canceled from attendancy_rec
+    </sql>
+
+    <select id="selectAttendancyRecList" parameterType="AttendancyRec" resultMap="AttendancyRecResult">
+        <include refid="selectAttendancyRecVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="typeId != null "> and type_id = #{typeId}</if>
+            <if test="addedBy != null "> and added_by = #{addedBy}</if>
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+            <if test="recDate != null "> and rec_date = #{recDate}</if>
+            <if test="params.beginCanceled != null and params.beginCanceled != '' and params.endCanceled != null and params.endCanceled != ''"> and canceled between #{params.beginCanceled} and #{params.endCanceled}</if>
+        </where>
+    </select>
+    
+    <select id="selectAttendancyRecById" parameterType="Long" resultMap="AttendancyRecResult">
+        <include refid="selectAttendancyRecVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAttendancyRec" parameterType="AttendancyRec" useGeneratedKeys="true" keyProperty="id">
+        insert into attendancy_rec
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="addedBy != null">added_by,</if>
+            <if test="courseName != null">course_name,</if>
+            <if test="recDate != null">rec_date,</if>
+            <if test="canceled != null">canceled,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="addedBy != null">#{addedBy},</if>
+            <if test="courseName != null">#{courseName},</if>
+            <if test="recDate != null">#{recDate},</if>
+            <if test="canceled != null">#{canceled},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAttendancyRec" parameterType="AttendancyRec">
+        update attendancy_rec
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="addedBy != null">added_by = #{addedBy},</if>
+            <if test="courseName != null">course_name = #{courseName},</if>
+            <if test="recDate != null">rec_date = #{recDate},</if>
+            <if test="canceled != null">canceled = #{canceled},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttendancyRecById" parameterType="Long">
+        delete from attendancy_rec where id = #{id}
+    </delete>
+
+    <delete id="deleteAttendancyRecByIds" parameterType="String">
+        delete from attendancy_rec where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

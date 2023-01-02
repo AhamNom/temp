@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.dormitory_score.mapper.DormitoryScoreMapper">
+    
+    <resultMap type="DormitoryScore" id="DormitoryScoreResult">
+        <result property="id"    column="id"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="score"    column="score"    />
+    </resultMap>
+
+    <sql id="selectDormitoryScoreVo">
+        select id, type_name, score from dormitory_score
+    </sql>
+
+    <select id="selectDormitoryScoreList" parameterType="DormitoryScore" resultMap="DormitoryScoreResult">
+        <include refid="selectDormitoryScoreVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="params.beginScore != null and params.beginScore != '' and params.endScore != null and params.endScore != ''"> and score between #{params.beginScore} and #{params.endScore}</if>
+        </where>
+    </select>
+    
+    <select id="selectDormitoryScoreById" parameterType="Long" resultMap="DormitoryScoreResult">
+        <include refid="selectDormitoryScoreVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDormitoryScore" parameterType="DormitoryScore" useGeneratedKeys="true" keyProperty="id">
+        insert into dormitory_score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">type_name,</if>
+            <if test="score != null">score,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">#{typeName},</if>
+            <if test="score != null">#{score},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDormitoryScore" parameterType="DormitoryScore">
+        update dormitory_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="typeName != null">type_name = #{typeName},</if>
+            <if test="score != null">score = #{score},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDormitoryScoreById" parameterType="Long">
+        delete from dormitory_score where id = #{id}
+    </delete>
+
+    <delete id="deleteDormitoryScoreByIds" parameterType="String">
+        delete from dormitory_score where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

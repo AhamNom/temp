@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.others_rec.mapper.OthersRecMapper">
+    
+    <resultMap type="OthersRec" id="OthersRecResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="typeId"    column="type_id"    />
+        <result property="addedBy"    column="added_by"    />
+        <result property="comm"    column="comm"    />
+        <result property="recDate"    column="rec_date"    />
+        <result property="canceled"    column="canceled"    />
+    </resultMap>
+
+    <sql id="selectOthersRecVo">
+        select id, student_id, type_id, added_by, comm, rec_date, canceled from others_rec
+    </sql>
+
+    <select id="selectOthersRecList" parameterType="OthersRec" resultMap="OthersRecResult">
+        <include refid="selectOthersRecVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="typeId != null "> and type_id = #{typeId}</if>
+            <if test="addedBy != null "> and added_by = #{addedBy}</if>
+            <if test="comm != null  and comm != ''"> and comm = #{comm}</if>
+            <if test="recDate != null "> and rec_date = #{recDate}</if>
+            <if test="params.beginCanceled != null and params.beginCanceled != '' and params.endCanceled != null and params.endCanceled != ''"> and canceled between #{params.beginCanceled} and #{params.endCanceled}</if>
+        </where>
+    </select>
+    
+    <select id="selectOthersRecById" parameterType="Long" resultMap="OthersRecResult">
+        <include refid="selectOthersRecVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertOthersRec" parameterType="OthersRec" useGeneratedKeys="true" keyProperty="id">
+        insert into others_rec
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="addedBy != null">added_by,</if>
+            <if test="comm != null">comm,</if>
+            <if test="recDate != null">rec_date,</if>
+            <if test="canceled != null">canceled,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="addedBy != null">#{addedBy},</if>
+            <if test="comm != null">#{comm},</if>
+            <if test="recDate != null">#{recDate},</if>
+            <if test="canceled != null">#{canceled},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOthersRec" parameterType="OthersRec">
+        update others_rec
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="addedBy != null">added_by = #{addedBy},</if>
+            <if test="comm != null">comm = #{comm},</if>
+            <if test="recDate != null">rec_date = #{recDate},</if>
+            <if test="canceled != null">canceled = #{canceled},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOthersRecById" parameterType="Long">
+        delete from others_rec where id = #{id}
+    </delete>
+
+    <delete id="deleteOthersRecByIds" parameterType="String">
+        delete from others_rec where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

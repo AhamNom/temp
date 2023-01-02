@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.teachers.mapper.TeachersMapper">
+    
+    <resultMap type="Teachers" id="TeachersResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectTeachersVo">
+        select id, user_id from teachers
+    </sql>
+
+    <select id="selectTeachersList" parameterType="Teachers" resultMap="TeachersResult">
+        <include refid="selectTeachersVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectTeachersById" parameterType="Long" resultMap="TeachersResult">
+        <include refid="selectTeachersVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTeachers" parameterType="Teachers" useGeneratedKeys="true" keyProperty="id">
+        insert into teachers
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeachers" parameterType="Teachers">
+        update teachers
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachersById" parameterType="Long">
+        delete from teachers where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachersByIds" parameterType="String">
+        delete from teachers where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

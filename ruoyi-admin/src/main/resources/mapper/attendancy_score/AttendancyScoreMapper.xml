@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.attendancy_score.mapper.AttendancyScoreMapper">
+    
+    <resultMap type="AttendancyScore" id="AttendancyScoreResult">
+        <result property="id"    column="id"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="score"    column="score"    />
+    </resultMap>
+
+    <sql id="selectAttendancyScoreVo">
+        select id, type_name, score from attendancy_score
+    </sql>
+
+    <select id="selectAttendancyScoreList" parameterType="AttendancyScore" resultMap="AttendancyScoreResult">
+        <include refid="selectAttendancyScoreVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="typeName != null "> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="params.beginScore != null and params.beginScore != '' and params.endScore != null and params.endScore != ''"> and score between #{params.beginScore} and #{params.endScore}</if>
+        </where>
+    </select>
+    
+    <select id="selectAttendancyScoreById" parameterType="Long" resultMap="AttendancyScoreResult">
+        <include refid="selectAttendancyScoreVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAttendancyScore" parameterType="AttendancyScore" useGeneratedKeys="true" keyProperty="id">
+        insert into attendancy_score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">type_name,</if>
+            <if test="score != null">score,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">#{typeName},</if>
+            <if test="score != null">#{score},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAttendancyScore" parameterType="AttendancyScore">
+        update attendancy_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="typeName != null">type_name = #{typeName},</if>
+            <if test="score != null">score = #{score},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttendancyScoreById" parameterType="Long">
+        delete from attendancy_score where id = #{id}
+    </delete>
+
+    <delete id="deleteAttendancyScoreByIds" parameterType="String">
+        delete from attendancy_score where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

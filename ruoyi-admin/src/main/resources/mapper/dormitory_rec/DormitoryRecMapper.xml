@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.dormitory_rec.mapper.DormitoryRecMapper">
+    
+    <resultMap type="DormitoryRec" id="DormitoryRecResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="typeId"    column="type_id"    />
+        <result property="addedBy"    column="added_by"    />
+        <result property="recDate"    column="rec_date"    />
+        <result property="canceled"    column="canceled"    />
+    </resultMap>
+
+    <sql id="selectDormitoryRecVo">
+        select id, student_id, type_id, added_by, rec_date, canceled from dormitory_rec
+    </sql>
+
+    <select id="selectDormitoryRecList" parameterType="DormitoryRec" resultMap="DormitoryRecResult">
+        <include refid="selectDormitoryRecVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="typeId != null "> and type_id = #{typeId}</if>
+            <if test="addedBy != null "> and added_by = #{addedBy}</if>
+            <if test="params.beginRecDate != null and params.beginRecDate != '' and params.endRecDate != null and params.endRecDate != ''"> and rec_date between #{params.beginRecDate} and #{params.endRecDate}</if>
+            <if test="canceled != null "> and canceled = #{canceled}</if>
+        </where>
+    </select>
+    
+    <select id="selectDormitoryRecById" parameterType="Long" resultMap="DormitoryRecResult">
+        <include refid="selectDormitoryRecVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDormitoryRec" parameterType="DormitoryRec" useGeneratedKeys="true" keyProperty="id">
+        insert into dormitory_rec
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="addedBy != null">added_by,</if>
+            <if test="recDate != null">rec_date,</if>
+            <if test="canceled != null">canceled,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="addedBy != null">#{addedBy},</if>
+            <if test="recDate != null">#{recDate},</if>
+            <if test="canceled != null">#{canceled},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDormitoryRec" parameterType="DormitoryRec">
+        update dormitory_rec
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="addedBy != null">added_by = #{addedBy},</if>
+            <if test="recDate != null">rec_date = #{recDate},</if>
+            <if test="canceled != null">canceled = #{canceled},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDormitoryRecById" parameterType="Long">
+        delete from dormitory_rec where id = #{id}
+    </delete>
+
+    <delete id="deleteDormitoryRecByIds" parameterType="String">
+        delete from dormitory_rec where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

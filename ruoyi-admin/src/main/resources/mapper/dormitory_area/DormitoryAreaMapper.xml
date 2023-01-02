@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.dormitory_area.mapper.DormitoryAreaMapper">
+    
+    <resultMap type="DormitoryArea" id="DormitoryAreaResult">
+        <result property="id"    column="id"    />
+        <result property="pId"    column="p_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectDormitoryAreaVo">
+        select id, p_id, dept_id, name from dormitory_area
+    </sql>
+
+    <select id="selectDormitoryAreaList" parameterType="DormitoryArea" resultMap="DormitoryAreaResult">
+        <include refid="selectDormitoryAreaVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="pId != null "> and p_id = #{pId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectDormitoryAreaById" parameterType="Long" resultMap="DormitoryAreaResult">
+        <include refid="selectDormitoryAreaVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDormitoryArea" parameterType="DormitoryArea" useGeneratedKeys="true" keyProperty="id">
+        insert into dormitory_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pId != null">p_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="name != null">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pId != null">#{pId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="name != null">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDormitoryArea" parameterType="DormitoryArea">
+        update dormitory_area
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pId != null">p_id = #{pId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="name != null">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDormitoryAreaById" parameterType="Long">
+        delete from dormitory_area where id = #{id}
+    </delete>
+
+    <delete id="deleteDormitoryAreaByIds" parameterType="String">
+        delete from dormitory_area where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

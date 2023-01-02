@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.dormitory_managers.mapper.DormitoryManagersMapper">
+    
+    <resultMap type="DormitoryManagers" id="DormitoryManagersResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="dormitoryId"    column="dormitory_id"    />
+    </resultMap>
+
+    <sql id="selectDormitoryManagersVo">
+        select id, user_id, dormitory_id from dormitory_managers
+    </sql>
+
+    <select id="selectDormitoryManagersList" parameterType="DormitoryManagers" resultMap="DormitoryManagersResult">
+        <include refid="selectDormitoryManagersVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="dormitoryId != null "> and dormitory_id = #{dormitoryId}</if>
+        </where>
+    </select>
+    
+    <select id="selectDormitoryManagersById" parameterType="Long" resultMap="DormitoryManagersResult">
+        <include refid="selectDormitoryManagersVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDormitoryManagers" parameterType="DormitoryManagers" useGeneratedKeys="true" keyProperty="id">
+        insert into dormitory_managers
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="dormitoryId != null">dormitory_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="dormitoryId != null">#{dormitoryId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDormitoryManagers" parameterType="DormitoryManagers">
+        update dormitory_managers
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="dormitoryId != null">dormitory_id = #{dormitoryId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDormitoryManagersById" parameterType="Long">
+        delete from dormitory_managers where id = #{id}
+    </delete>
+
+    <delete id="deleteDormitoryManagersByIds" parameterType="String">
+        delete from dormitory_managers where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
